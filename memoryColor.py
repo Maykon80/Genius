@@ -3,34 +3,23 @@ import time
 import pygame
 from pygame.locals import *
 
-pygame.init()
-clock = pygame.time.Clock()
+pygame.init()                                                                   # Inicia Pygame
+clock = pygame.time.Clock()                                                     # clock do jogo
 fontes = pygame.font.SysFont('Arial', 40)
 
-janela = pygame.display.set_mode((800, 400), 0, 32)
+janela = pygame.display.set_mode((800, 400), 0, 32)                             # Janela
 
-# Fundo
-background = pygame.image.load('Fundo.png').convert()
+background = pygame.image.load('Fundo.png').convert()                           # Fundo
 
-# Cores Constantes
-"""VERMELHO = {'apagado': (155, 0, 0), 'aceso': (255, 0, 0)}
-VERDE = {'apagado': (0, 155, 0), 'aceso': (0, 255, 0)}
-AMARELO = {'apagado': (155, 155, 0), 'aceso': (255, 255, 0)}
-AZUL = {'apagado': (0, 0, 155), 'aceso': (0, 0, 255)
+# Circulos
+circulo_red = {'cor': [(155, 0, 0), (255, 0, 0)], 'posicao': (103, 255)}
+circulo_yellow = {'cor': [(155, 155, 0), (255, 255, 0)], 'posicao': (303, 255)}
+circulo_green = {'cor': [(0, 155, 0), (0, 255, 0)], 'posicao': (503, 255)}
+circulo_blue = {'cor': [(0, 0, 155), (0, 0, 255)], 'posicao': (703, 255)}
 
-cores = [VERDE, VERMELHO, AMARELO, AZUL]"""
+circulos = [circulo_yellow, circulo_green, circulo_red, circulo_blue]           # Lista com os circulos
 
-# Posicoes Possiveis
-posicoes = [(103, 255), (303, 255), (503, 255), (703, 255)]
-
-# Circulos apagadas
-circulo_red = {'cor': [(155, 0, 0), (255, 0, 0)], 'posicao': posicoes[0]}
-circulo_yellow = {'cor': [(155, 155, 0), (255, 255, 0)], 'posicao': posicoes[1]}
-circulo_green = {'cor': [(0, 155, 0), (0, 255, 0)], 'posicao': posicoes[2]}
-circulo_blue = {'cor': [(0, 0, 155), (0, 0, 255)], 'posicao': posicoes[3]}
-
-circulos = [circulo_yellow, circulo_green, circulo_red, circulo_blue]
-
+# Texto começar
 comecar_text = fontes.render('Comecar', True, (0, 0, 0))
 comecar_rect = comecar_text.get_rect()
 comecar_rect.left = 350
