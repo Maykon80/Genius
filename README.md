@@ -6,7 +6,7 @@ perca ou apague algo que ja esteja feito e funcionando corretamente por acidente
 
 > Objetivos a serem concluidos no arquivo memoryColor_SemGrafico
 
-* Colocar Pontuação. (X)
+* Colocar Pontuação. (V)
 * Colocar o tempo que a cor fica acesa, tempo que fica apagada e tempo para comecar a proxima sequencia de cores. (X)
 	* [ ] 2 segundos acesa
 	* [ ] 0.5 apagada
