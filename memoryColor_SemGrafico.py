@@ -35,6 +35,7 @@ def confere_resp(lista_gerada, resp):
     else:
         return False
 
+pontos = 0
 
 while True:
     lista_gerada_aleatoriamente = sequencia(4)
@@ -43,5 +44,9 @@ while True:
     # Palpite do usuario, a principio aqui o palpite é dado por uma string do numero das posicoes
     resp = list(input('>>> '))
 
-    print(confere_resp(lista_gerada_aleatoriamente, resp))  # Retorna se o jogador acertou
+    if confere_resp(lista_gerada_aleatoriamente, resp):  # Verifica se o jogador acertou
+        pontos += 1
+        
+    print(f"Pontos: \t {pontos}")
+    
     lista_gerada_aleatoriamente = []  # Zera a lista
