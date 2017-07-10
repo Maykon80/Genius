@@ -12,5 +12,6 @@ perca ou apague algo que ja esteja feito e funcionando corretamente por acidente
 	* [ ] 0.5 apagada
 	* [ ] 2 segundos para a proxima sequencia
 * Limpar as cores que ja piscaram. Como é executado no interpretador pode ser X espaços entre os prints das cores. (X)
+* Fazer uma função para recolher a sequencia do jogador (X)
 
 Até o momento só isso mesmo.
