@@ -12,7 +12,7 @@ perca ou apague algo que ja esteja feito e funcionando corretamente por acidente
 	* [ ] 0.5 apagada
 	* [ ] 2 segundos para a proxima sequencia
 * Limpar as cores que ja piscaram. Como é executado no interpretador pode ser X espaços entre os prints das cores. (V)
-* Fazer uma função para recolher a sequencia do jogador (X)
+* Fazer uma função para recolher a sequencia do jogador (V)
 * Fazer um contador de dificuldade. Quando o jogador acertar 5 vezes, o numero de cores que ele tem que
 decorar vai aumentar de 4 para 5. Quando acertar 10 aumenta de 5 para 6, e assim por diante, a cada 5 acertos aumenta o numero de cores para decorar.
 
