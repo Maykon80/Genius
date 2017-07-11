@@ -21,8 +21,10 @@ def sequencia(seq_num):
         lista_gerada.append(str(rand))  # Adiciona à lista_gerada o numero da posicao da cor na lista
         lista[rand] = lista[rand].upper()  # Pisca a cor
         print(lista)  # Mostra a cor
-        lista[rand] = lista[rand].lower()  # Apaga a cor
         time.sleep(2)  # Aguarda dois segundos
+        
+        lista[rand] = lista[rand].lower()  # Apaga a cor
+        time.sleep(0.5)
         con += 1
 
     return lista_gerada
@@ -38,6 +40,8 @@ def confere_resp(lista_gerada, resp):
 pontos = 0
 
 while True:
+    time.sleep(2)  # Tempo para começar a piscar a nova sequencia de cores
+    
     lista_gerada_aleatoriamente = sequencia(4)
     print(lista_gerada_aleatoriamente)  # Da a resposta do jogo
 
