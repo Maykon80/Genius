@@ -39,6 +39,21 @@ def confere_resp(lista_gerada, resp):
 
 pontos = 0
 
+#Função para recolher a sequencia do jogador
+def recolher_resposta(rec_resp):
+    resp_jogador = []
+    print ("Digite um número")
+    con = 1
+    while con <= rec_resp:
+        resp = input('')
+        if  (resp != '0') and (resp !='1') and (resp != '2') and (resp !='3'):
+            print("Digite um número de 0 á 3")
+            continue
+        else:
+            resp_jogador.append(resp)
+            con += 1
+    return resp_jogador
+
 while True:
     time.sleep(2)  # Tempo para começar a piscar a nova sequencia de cores
     
@@ -46,7 +61,7 @@ while True:
     print(lista_gerada_aleatoriamente)  # Da a resposta do jogo
 
     # Palpite do usuario, a principio aqui o palpite é dado por uma string do numero das posicoes
-    resp = list(input('>>> '))
+    resp = recolher_resposta(4)
 
     if confere_resp(lista_gerada_aleatoriamente, resp):  # Verifica se o jogador acertou
         pontos += 1
@@ -54,3 +69,4 @@ while True:
     print(f"Pontos: \t {pontos}")
     
     lista_gerada_aleatoriamente = []  # Zera a lista
+
