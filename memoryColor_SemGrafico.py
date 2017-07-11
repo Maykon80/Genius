@@ -4,7 +4,7 @@ import time
 
 """
     Esse codigo foi feito para fazer a dinamica do jogo sem a parte grafica. A finalidade é pensar nas funções que
-    o jogo precisara. As cores apagadas sao representadas por seus nomes em minusculo, e acesa por MAIUSCULO. 
+    o jogo precisara. As cores apagadas sao representadas por seus nomes em minusculo, e acesa por MAIUSCULO.
 """
 
 # Lista que faz alusao as cores no jogo
@@ -20,6 +20,7 @@ def sequencia(seq_num):
         rand = random.randint(0, len(lista) - 1)  # Posicao aleatoria da lista
         lista_gerada.append(str(rand))  # Adiciona à lista_gerada o numero da posicao da cor na lista
         lista[rand] = lista[rand].upper()  # Pisca a cor
+        print("\n" * 20)
         print(lista)  # Mostra a cor
         time.sleep(2)  # Aguarda dois segundos
         
