@@ -16,6 +16,12 @@ pygame.display.set_caption("memoryColor")  # Titulo da janela do jogo
 
 background = pygame.image.load('Fundo.png').convert()  # Fundo
 
+# Sons
+fundo_som = pygame.mixer.Sound('som/som_background.wav')
+som = {'inicio_jogo': 'som/inicio_jogo.wav', 'perdeu': 'som/perdeu_jogo.wav', 'clique_fora': 'som/clique_fora.wav',
+       'subiu_nivel': 'som/subiu_nivel.wav', 'subiu_dificuldade': 'som/subir_dificuldade.wav',
+       'clique': 'som/clique.wav'}
+
 # Cores
 VERMELHO = (255, 0, 0)
 AMARELO = (255, 255, 0)
@@ -58,7 +64,7 @@ def gerarCoresAleatorias(dificuldade):
 
 
 # Função para recolher o palpite do jogador
-def recolhe_resposta(dificuldade):
+def recolheResposta(dificuldade):
     resp = []
     while 1 <= dificuldade:
 
@@ -68,25 +74,30 @@ def recolhe_resposta(dificuldade):
             if event.type == MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
                 if circulo_detecta_red.collidepoint(mouse):
+                    tocaSom(som['clique'], 0)
                     resp.append(VERMELHO)
                     dificuldade -= 1
                 elif circulo_detecta_yeloow.collidepoint(mouse):
+                    tocaSom(som['clique'], 0)
                     resp.append(AMARELO)
                     dificuldade -= 1
                 elif circulo_detecta_green.collidepoint(mouse):
+                    tocaSom(som['clique'], 0)
                     resp.append(VERDE)
                     dificuldade -= 1
                 elif circulo_detecta_blue.collidepoint(mouse):
+                    tocaSom(som['clique'], 0)
                     resp.append(AZUL)
                     dificuldade -= 1
                 else:
-                    print("Fora!")
+                    mudaStatus(pontos, dificuldade, "Clicou fora da cor!")
+                    tocaSom(som['clique_fora'], 0)
 
     return resp
 
 
 # Função para comparar as cores que piscaram com as que o jogador forneceu
-def confere_resp(seq_aleatoria, resp_jogador):
+def confereResp(seq_aleatoria, resp_jogador):
     if seq_aleatoria == resp_jogador:
         return True
     else:
@@ -94,7 +105,7 @@ def confere_resp(seq_aleatoria, resp_jogador):
 
 
 # Função para modificar a barra de status
-def muda_status(pontos, dificuldade, texto):
+def mudaStatus(pontos, dificuldade, texto):
     barra_status.fill((60, 30, 190))
 
     pontuacao = fonte_status.render('Pontuação: ' + str(pontos), True, (255, 255, 255))
@@ -109,16 +120,44 @@ def muda_status(pontos, dificuldade, texto):
     pygame.display.update()
 
 
+# Reproduz som
+def tocaSom(tipo_som, loop):
+    pygame.mixer.music.load(tipo_som)
+    pygame.mixer.music.play(loop)
+
+
+# Função para verificar se o jogador quer jogar novamente
+def jogarNovamente():
+    jogar_novamente_text = fonte_opcao.render('Jogar Novamente?', True, (0, 0, 0))  # Botao jogar Novamente
+    jogar_novamente_btn = pygame.draw.rect(janela, (70, 200, 230), (275, 90, 280, 50))
+
+    janela.blit(jogar_novamente_text, (280, 90))
+    pygame.display.update()
+
+    while True:
+        for evento in pygame.event.get():
+            if evento.type == QUIT:
+                quit()
+            if evento.type == MOUSEBUTTONDOWN:
+                mouse = pygame.mouse.get_pos()
+                if jogar_novamente_btn.collidepoint(mouse):
+                    janela.blit(background, (0, 30))
+                    pygame.display.update()
+                    return True
+                else:
+                    quit()
+
+
 pontos = 0
 dificuldade = 4
 jogando = False
 
+
 # Textos
-comecar_text = fonte_opcao.render('Começar', True, (0, 0, 0))  # Botao começar
-comecar_rect = comecar_text.get_rect()
-comecar_rect.left = 350
-comecar_rect.top = 80
+comecar_text = fonte_opcao.render('Começar', True, (0, 0, 0))  # Texto do botao começar
 texto = ' '  # Textos
+
+tocaSom(som['inicio_jogo'], -1)  # Toca a musica de inicio do jogo enquanto nao começar o jogo
 
 # Aguarda o começo do jogo
 while not jogando:
@@ -127,22 +166,25 @@ while not jogando:
             quit()
         if evento.type == MOUSEBUTTONDOWN:
             mouse = pygame.mouse.get_pos()
-            if comecar_rect.collidepoint(mouse):
+            if comecar_btn.collidepoint(mouse): # Detecta se clicou no botao
                 jogando = True
 
-    muda_status(pontos, dificuldade, "Decore as cores que piscarem")
+    mudaStatus(pontos, dificuldade, "Decore as cores que piscarem")
     janela.blit(barra_status, (0, 0))
     janela.blit(background, (0, 30))
-    janela.blit(comecar_text, (340, 80))
+    comecar_btn = pygame.draw.rect(janela, (70, 200, 230), (332, 90, 150, 50))   # Desenha botao
+    janela.blit(comecar_text, (340, 90))    # Desenha texto no botao
     pygame.display.update()
     clock.tick(27)
 
+pygame.mixer.music.stop()  # Para o som de inicio quando o jogo começar
+fundo_som.play(-1)  # Inicia o som de fundo do jogo
 janela.blit(background, (0, 30))  # Limpa a tela antes de piscar as cores
 pygame.display.update()
 
 # Loop principal do jogo
 while jogando:
-    muda_status(pontos, dificuldade, "Decore as cores que piscarem")  # Muda os status
+    mudaStatus(pontos, dificuldade, "Decore as cores que piscarem")  # Muda os status
     time.sleep(2.5)  # Tempo para as cores começarem a piscar
 
     for event in pygame.event.get():
@@ -151,18 +193,28 @@ while jogando:
 
     cores_aleatorias = gerarCoresAleatorias(dificuldade)  # Armazena as cores geradas na variavel
 
-    muda_status(pontos, dificuldade, "Repita na ordem certa as cores que acenderam")
+    mudaStatus(pontos, dificuldade, "Repita na ordem certa as cores que acenderam")
 
-    resp_jogador = recolhe_resposta(dificuldade)    # Recolhe a resposta do jogador
+    resp_jogador = recolheResposta(dificuldade)  # Recolhe a resposta do jogador
 
-    if confere_resp(cores_aleatorias, resp_jogador):  # Verifica se o jogador acertou
+    if confereResp(cores_aleatorias, resp_jogador):  # Verifica se o jogador acertou
 
         pontos += 100  # Acrescenta mais 100 aos pontos
+        tocaSom(som['subiu_nivel'], 0)
 
-        if (pontos % 500 == 0) and (pontos != 0):   # Verifica se pode aumentar a dificuldade
+        if (pontos % 500 == 0) and (pontos != 0):  # Verifica se pode aumentar a dificuldade
             dificuldade += 1
+            tocaSom(som['subiu_dificuldade'], 0)
     else:
-        quit()
+        mudaStatus(pontos, dificuldade, "Errou as cores!")
+        fundo_som.stop()
+        tocaSom(som['perdeu'], 0)
+        jogando = jogarNovamente()
+        if jogando:
+            pontos = 0
+            dificuldade = 4
+            fundo_som.play(-1)  # Inicia o som de fundo do jogo
+            continue
 
     janela.blit(background, (0, 30))
     pygame.display.update()
