@@ -3,26 +3,28 @@ from pygame.locals import *
 
 pygame.init()
 clock = pygame.time.Clock()
-fonte_opcao = pygame.font.SysFont('Arial', 40)                  # Fonte para as opções
-fonte_status = pygame.font.SysFont('Arial', 20)                 # Fonte para a barra de status
+fonte_opcao = pygame.font.SysFont('Arial', 40)  # Fonte para as opções
+fonte_status = pygame.font.SysFont('Calibri', 15)  # Fonte para a barra de status
 
-janela = pygame.display.set_mode((500, 530), 0, 32)             # Janela
-pygame.display.set_caption("Gênius")                            # Titulo da janela
-icone_img = pygame.image.load('logo.png')                       # Imagem do icone do jogo
+janela = pygame.display.set_mode((500, 530), 0, 32)  # Janela
+pygame.display.set_caption("Gênius")  # Titulo da janela
+icone_img = pygame.image.load('logo.png')  # Imagem do icone do jogo
 pygame.display.set_icon(icone_img)
-barra_status = pygame.Surface((janela.get_width(), 30))         # Barra de status
-barra_status.fill((60, 30, 190))                                # Cor da barra de status
+barra_status = pygame.Surface((janela.get_width(), 30))  # Barra de status
+barra_status.fill((60, 30, 190))  # Cor da barra de status
 
-background = pygame.image.load('Fundo.png')                     # Imagem de fundo
+background = pygame.image.load('Fundo.png')  # Imagem de fundo
 
 # Cores
 VERMELHO = (255, 0, 0)
 VERDE = (0, 255, 0)
 AMARELO = (255, 255, 0)
 AZUL = (50, 190, 255)
+BRANCO = (255, 255, 255)
 
 # Sons
-sons = {'som_do': 'som/do.wav', 'som_re': 'som/re.wav', 'som_mi': 'som/mi.wav', 'som_fa': 'som/fa.wav'}
+sons = {'som_do': 'som/do.wav', 'som_re': 'som/re.wav', 'som_mi': 'som/mi.wav', 'som_fa': 'som/fa.wav',
+        'perdeu': 'som/perdeu_jogo.wav', 'clique': 'som/clique.wav'}
 
 # Poligonos que detectam a escolha com o clique do mouse
 cor_verde = pygame.draw.polygon(janela, VERDE, ((81, 317), (230, 317), (230, 159)))
@@ -30,13 +32,45 @@ cor_amarelo = pygame.draw.polygon(janela, AMARELO, ((409, 315), (263, 315), (263
 cor_vermelha = pygame.draw.polygon(janela, VERMELHO, ((80, 345), (230, 346), (230, 495)))
 cor_azul = pygame.draw.polygon(janela, AZUL, ((411, 345), (265, 347), (263, 495)))
 
+# Textos
+comecar_text = fonte_opcao.render('Começar', True, (0, 0, 0))  # Texto do botao começar
+texto = ' '
+
+pontos = 0  # Pontuação
+cores_sequencia = []  # Sequencia de cores que vao piscar
+jogando = False
+
+ranking_jogo = {'pontos': '', 'nome': ''}  # Armazena quem esta no ranking
+nome_jogador = 'Maykon'  # Falta a janela para o input do nome
+
+
+# Ranking
+def Ranking(modo):
+    if modo == 'escrever':
+        ranking_file = open('ranking.txt', 'w')
+        ranking_file.write('p{}\nn{}'.format(str(pontos), nome_jogador))
+        ranking_file.close()
+    elif modo == 'ler':
+        ranking_file = open('ranking.txt', 'r')
+        ranking = ranking_file.readlines()
+        for linha in ranking:
+            if linha.startswith('p'):
+                ranking_jogo['pontos'] = linha[1:]
+            elif linha.startswith('n'):
+                ranking_jogo['nome'] = linha[1:]
+            else:
+                pass
+        ranking_file.close()
+    else:
+        pass
+
 
 # Escolhe uma cor para piscar aleatorimanete
 def escolherCorAleatoria():
     luz_verde = {'cor': VERDE, 'posicao': ((81, 317), (230, 317), (230, 169)), 'som': sons['som_do']}
     luz_amarela = {'cor': AMARELO, 'posicao': ((409, 315), (263, 315), (263, 168)), 'som': sons['som_fa']}
-    luz_azul = {'cor': AZUL, 'posicao': ((411, 345), (264, 346), (263, 495)), 'som': sons['som_re']}
-    luz_vermelha = {'cor': VERMELHO, 'posicao': ((80, 345), (230, 346), (230, 495)), 'som': sons['som_mi']}
+    luz_azul = {'cor': AZUL, 'posicao': ((411, 345), (264, 346), (263, 495)), 'som': sons['som_mi']}
+    luz_vermelha = {'cor': VERMELHO, 'posicao': ((80, 345), (230, 346), (230, 495)), 'som': sons['som_re']}
 
     cores = [luz_verde, luz_amarela, luz_vermelha, luz_azul]
     return random.choice(cores)
@@ -48,11 +82,11 @@ def piscarCores(lista_cores):
         tocaSom(cor['som'])
         pygame.draw.polygon(janela, cor['cor'], cor['posicao'])
         pygame.display.update()
-        time.sleep(0.3)                                            # Tempo para mostrar a proxima cor
+        time.sleep(0.3)  # Tempo para mostrar a proxima cor
 
         janela.blit(background, (0, 30))
         pygame.display.update()
-        time.sleep(0.3)                                         # Tempo que a cor fica apagada
+        time.sleep(0.3)  # Tempo que a cor fica apagada
 
 
 # Aguarda a resposta do jogador e retorna a resposta
@@ -74,15 +108,16 @@ def recolheResposta(quantidade_cores):
                     palpite_usuario.append(AMARELO)
                     quantidade_cores -= 1
                 elif cor_vermelha.collidepoint(mouse):
-                    tocaSom(sons['som_mi'])
+                    tocaSom(sons['som_re'])
                     palpite_usuario.append(VERMELHO)
                     quantidade_cores -= 1
                 elif cor_azul.collidepoint(mouse):
-                    tocaSom(sons['som_re'])
+                    tocaSom(sons['som_mi'])
                     palpite_usuario.append(AZUL)
                     quantidade_cores -= 1
                 else:
-                    mostrarStatus(pontos, 'Clicou fora')
+                    tocaSom(sons['clique'])
+                    mostrarStatus(pontos, 'Clicou fora', ranking_jogo)
     return palpite_usuario
 
 
@@ -99,14 +134,16 @@ def confereResposta(jogador_resp, lista_seq):
 
 
 # Muda status
-def mostrarStatus(pontos, texto):
+def mostrarStatus(pontos, texto, rank_dados):
     barra_status.fill((60, 30, 190))
 
-    pontuacao = fonte_status.render('Pontuação: ' + str(pontos), True, (255, 255, 255))
+    pontuacao = fonte_status.render('Pontos: ' + str(pontos), True, (BRANCO))
     status_txt = fonte_status.render(texto, True, (255, 255, 255))  # Texto para apresentar na barra de status
+    rank = fonte_status.render('Ranking: ' + rank_dados['nome'] + ' - ' + rank_dados['pontos'][0:-1], False, (BRANCO))
 
-    barra_status.blit(pontuacao, (10, 4))
-    barra_status.blit(status_txt, (150, 4))
+    barra_status.blit(pontuacao, (10, 6))
+    barra_status.blit(status_txt, (120, 6))
+    barra_status.blit(rank, (310, 6))
 
     janela.blit(barra_status, (0, 0))
     pygame.display.update()
@@ -114,7 +151,7 @@ def mostrarStatus(pontos, texto):
 
 # Função para jogar novamente
 def jogarNovamente():
-    jogar_novamente = fonte_opcao.render('Jogar Novamente', True, (0, 0, 0))    # Texto do botao jogar novamete
+    jogar_novamente = fonte_opcao.render('Jogar Novamente', True, (0, 0, 0))  # Texto do botao jogar novamete
 
     while True:
         for evento in pygame.event.get():
@@ -142,14 +179,6 @@ def tocaSom(tipo_som):
     pygame.mixer.music.play()
 
 
-# Textos
-comecar_text = fonte_opcao.render('Começar', True, (0, 0, 0))  # Texto do botao começar
-texto = ' '
-
-pontos = 0                                                      # Pontuação
-cores_sequencia = []                                            # Sequencia de cores que vao piscar
-jogando = False
-
 while not jogando:
     for evento in pygame.event.get():
         if evento.type == QUIT:
@@ -168,31 +197,38 @@ while not jogando:
 
 janela.blit(background, (0, 30))
 pygame.display.update()
+Ranking('ler')
 
 while jogando:
-    mostrarStatus(pontos, 'Decore a sequência de cores')
-    time.sleep(1)                                               # Tempo para começar a proxima sequencia
+    mostrarStatus(pontos, 'Decore a sequência de cores', ranking_jogo)
+    time.sleep(1)  # Tempo para começar a proxima sequencia
 
     for evento in pygame.event.get():
         if evento.type == QUIT:
             quit()
 
-    cores_sequencia.append(escolherCorAleatoria())              # Escolhe uma cor e adiciona a lista de sequencia
-    piscarCores(cores_sequencia)                                # Pisca as cores que estao na sequencia
+    cores_sequencia.append(escolherCorAleatoria())  # Escolhe uma cor e adiciona a lista de sequencia
+    piscarCores(cores_sequencia)  # Pisca as cores que estao na sequencia
 
-    mostrarStatus(pontos, 'Repita a sequência de cores')
-    resposta_jogador = recolheResposta(len(cores_sequencia))    # Aguarda a resposta do jogador
+    mostrarStatus(pontos, 'Repita a sequência de cores', ranking_jogo)
+    resposta_jogador = recolheResposta(len(cores_sequencia))  # Aguarda a resposta do jogador
 
-    if confereResposta(resposta_jogador, cores_sequencia):      # Confere a resposta do jogador
-        pontos += 100                                           # Soma pontuação
+    if confereResposta(resposta_jogador, cores_sequencia):  # Confere a resposta do jogador
+        pontos += 100  # Soma pontuação
         continue
     else:
-        mostrarStatus(pontos, 'Errou a sequencia')
-        jogando = jogarNovamente()                              # Pergunta se quer jogar novamente
+        mostrarStatus(pontos, 'Errou a sequencia', ranking_jogo)
+        tocaSom(sons['perdeu'])
+
+        if pontos > int(ranking_jogo['pontos']):                # Verifica se o jogador ultrapassou o ranking
+            Ranking('escrever')                                 # Falta pegar o nome
+
+        jogando = jogarNovamente()  # Pergunta se quer jogar novamente
 
         if jogando:
-            pontos = 0                                          # Zera pontuação
-            cores_sequencia = []                                # Zera a sequencia
+            Ranking('ler')
+            pontos = 0  # Zera pontuação
+            cores_sequencia = []  # Zera a sequencia
             continue
         else:
             quit()
