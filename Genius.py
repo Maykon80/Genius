@@ -1,16 +1,17 @@
 import random, pygame, time
 from pygame.locals import *
+from tkinter import *
 
 pygame.init()
 clock = pygame.time.Clock()
 fonte_opcao = pygame.font.SysFont('Arial', 40)  # Fonte para as opções
 fonte_status = pygame.font.SysFont('Calibri', 15)  # Fonte para a barra de status
 
-janela = pygame.display.set_mode((500, 530), 0, 32)  # Janela
+janela_p = pygame.display.set_mode((500, 530), 0, 32)  # Janela
 pygame.display.set_caption("Gênius")  # Titulo da janela
 icone_img = pygame.image.load('logo.png')  # Imagem do icone do jogo
 pygame.display.set_icon(icone_img)
-barra_status = pygame.Surface((janela.get_width(), 30))  # Barra de status
+barra_status = pygame.Surface((janela_p.get_width(), 30))  # Barra de status
 barra_status.fill((60, 30, 190))  # Cor da barra de status
 
 background = pygame.image.load('Fundo.png')  # Imagem de fundo
@@ -27,10 +28,10 @@ sons = {'som_do': 'som/do.wav', 'som_re': 'som/re.wav', 'som_mi': 'som/mi.wav', 
         'perdeu': 'som/perdeu_jogo.wav', 'clique': 'som/clique.wav'}
 
 # Poligonos que detectam a escolha com o clique do mouse
-cor_verde = pygame.draw.polygon(janela, VERDE, ((81, 317), (230, 317), (230, 159)))
-cor_amarelo = pygame.draw.polygon(janela, AMARELO, ((409, 315), (263, 315), (263, 168)))
-cor_vermelha = pygame.draw.polygon(janela, VERMELHO, ((80, 345), (230, 346), (230, 495)))
-cor_azul = pygame.draw.polygon(janela, AZUL, ((411, 345), (265, 347), (263, 495)))
+cor_verde = pygame.draw.polygon(janela_p, VERDE, ((81, 317), (230, 317), (230, 159)))
+cor_amarelo = pygame.draw.polygon(janela_p, AMARELO, ((409, 315), (263, 315), (263, 168)))
+cor_vermelha = pygame.draw.polygon(janela_p, VERMELHO, ((80, 345), (230, 346), (230, 495)))
+cor_azul = pygame.draw.polygon(janela_p, AZUL, ((411, 345), (265, 347), (263, 495)))
 
 # Textos
 comecar_text = fonte_opcao.render('Começar', True, (0, 0, 0))  # Texto do botao começar
@@ -41,7 +42,7 @@ cores_sequencia = []  # Sequencia de cores que vao piscar
 jogando = False
 
 ranking_jogo = {'pontos': '', 'nome': ''}  # Armazena quem esta no ranking
-nome_jogador = 'Maykon'  # Falta a janela para o input do nome
+nome_jogador = ''  # Nome do jogador
 
 
 # Ranking
@@ -80,11 +81,11 @@ def escolherCorAleatoria():
 def piscarCores(lista_cores):
     for cor in lista_cores:
         tocaSom(cor['som'])
-        pygame.draw.polygon(janela, cor['cor'], cor['posicao'])
+        pygame.draw.polygon(janela_p, cor['cor'], cor['posicao'])
         pygame.display.update()
         time.sleep(0.3)  # Tempo para mostrar a proxima cor
 
-        janela.blit(background, (0, 30))
+        janela_p.blit(background, (0, 30))
         pygame.display.update()
         time.sleep(0.3)  # Tempo que a cor fica apagada
 
@@ -145,7 +146,7 @@ def mostrarStatus(pontos, texto, rank_dados):
     barra_status.blit(status_txt, (120, 6))
     barra_status.blit(rank, (310, 6))
 
-    janela.blit(barra_status, (0, 0))
+    janela_p.blit(barra_status, (0, 0))
     pygame.display.update()
 
 
@@ -160,15 +161,15 @@ def jogarNovamente():
             if evento.type == MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
                 if jogar_novamente_btn.collidepoint(mouse):
-                    janela.blit(background, (0, 30))
+                    janela_p.blit(background, (0, 30))
                     pygame.display.update()
                     return True
                 else:
                     return False
 
-        janela.blit(background, (0, 30))
-        jogar_novamente_btn = pygame.draw.rect(janela, (70, 200, 230), (110, 60, 270, 50))  # Desenha botao
-        janela.blit(jogar_novamente, (115, 60))  # Desenha texto no botao
+        janela_p.blit(background, (0, 30))
+        jogar_novamente_btn = pygame.draw.rect(janela_p, (70, 200, 230), (110, 60, 270, 50))  # Desenha botao
+        janela_p.blit(jogar_novamente, (115, 60))  # Desenha texto no botao
         pygame.display.update()
         clock.tick(27)
 
@@ -177,6 +178,55 @@ def jogarNovamente():
 def tocaSom(tipo_som):
     pygame.mixer.music.load(tipo_som)
     pygame.mixer.music.play()
+
+
+def JanelaRank(pontos):
+
+    def salvarNome():
+        global nome_jogador
+
+        if nome_usuario.get() == '':
+            pass
+        else:
+            nome_jogador = nome_usuario.get()
+            janela.destroy()
+
+    janela = Tk()
+
+    janela1 = Frame()
+    janela2 = Frame()
+    janela3 = Frame()
+    janela4 = Frame()
+
+    janela1['pady'] = 10
+    janela1.pack()
+
+    janela2['padx'] = 20
+    janela2.pack()
+
+    janela3['pady'] = 20
+    janela3.pack()
+
+    janela4['pady'] = 20
+    janela4.pack()
+
+    titulo = Label(janela1, text="Novo Ranking", font=("Arial", "10", "bold"))
+    titulo.pack()
+
+    nome_label = Label(janela2, text="Nome", font=("Verdana", "16"))
+    nome_label.pack(side=LEFT)
+    nome_usuario = Entry(janela2, width=20, font=("Arial", "12"))
+    nome_usuario.pack(side=LEFT)
+
+    pontos_label = Label(janela3, text="Pontos", font=("Verdana", "16"))
+    pontos_label.pack(side=LEFT)
+    pontos_jogador = Label(janela3, text=pontos, width=20, font=("Arial", "12"))
+    pontos_jogador.pack(side=LEFT)
+
+    botao = Button(janela4, text="Salvar", width=12, font=("Calibri", "10"), command=salvarNome)
+    botao.pack()
+
+    janela.mainloop()
 
 
 while not jogando:
@@ -188,14 +238,14 @@ while not jogando:
             if comecar_btn.collidepoint(mouse):
                 jogando = True
 
-    janela.blit(background, (0, 30))
-    janela.blit(barra_status, (0, 0))
-    comecar_btn = pygame.draw.rect(janela, (70, 200, 230), (175, 60, 150, 50))  # Desenha botao
-    janela.blit(comecar_text, (183, 60))  # Desenha texto no botao
+    janela_p.blit(background, (0, 30))
+    janela_p.blit(barra_status, (0, 0))
+    comecar_btn = pygame.draw.rect(janela_p, (70, 200, 230), (175, 60, 150, 50))  # Desenha botao
+    janela_p.blit(comecar_text, (183, 60))  # Desenha texto no botao
     pygame.display.update()
     clock.tick(27)
 
-janela.blit(background, (0, 30))
+janela_p.blit(background, (0, 30))
 pygame.display.update()
 Ranking('ler')
 
@@ -220,8 +270,9 @@ while jogando:
         mostrarStatus(pontos, 'Errou a sequencia', ranking_jogo)
         tocaSom(sons['perdeu'])
 
-        if pontos > int(ranking_jogo['pontos']):                # Verifica se o jogador ultrapassou o ranking
-            Ranking('escrever')                                 # Falta pegar o nome
+        if pontos > int(ranking_jogo['pontos']):  # Verifica se o jogador ultrapassou o ranking
+            JanelaRank(str(pontos))
+            Ranking('escrever')  # Falta pegar o nome
 
         jogando = jogarNovamente()  # Pergunta se quer jogar novamente
 
