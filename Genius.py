@@ -83,11 +83,11 @@ def piscarCores(lista_cores):
         tocaSom(cor['som'])
         pygame.draw.polygon(janela_p, cor['cor'], cor['posicao'])
         pygame.display.update()
-        time.sleep(0.3)  # Tempo para mostrar a proxima cor
+        time.sleep(0.3)                                         # Tempo para mostrar a proxima cor
 
         janela_p.blit(background, (0, 30))
         pygame.display.update()
-        time.sleep(0.3)  # Tempo que a cor fica apagada
+        time.sleep(0.3)                                         # Tempo que a cor fica apagada
 
 
 # Aguarda a resposta do jogador e retorna a resposta
@@ -169,7 +169,7 @@ def jogarNovamente():
 
         janela_p.blit(background, (0, 30))
         jogar_novamente_btn = pygame.draw.rect(janela_p, (70, 200, 230), (110, 60, 270, 50))  # Desenha botao
-        janela_p.blit(jogar_novamente, (115, 60))  # Desenha texto no botao
+        janela_p.blit(jogar_novamente, (115, 60))               # Desenha texto no botao
         pygame.display.update()
         clock.tick(27)
 
