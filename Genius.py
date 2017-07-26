@@ -4,17 +4,17 @@ from tkinter import *
 
 pygame.init()
 clock = pygame.time.Clock()
-fonte_opcao = pygame.font.SysFont('Arial', 40)  # Fonte para as opções
-fonte_status = pygame.font.SysFont('Calibri', 15)  # Fonte para a barra de status
+fonte_opcao = pygame.font.SysFont('Arial', 40)                  # Fonte para as opções
+fonte_status = pygame.font.SysFont('Calibri', 15)               # Fonte para a barra de status
 
-janela_p = pygame.display.set_mode((500, 530), 0, 32)  # Janela
-pygame.display.set_caption("Gênius")  # Titulo da janela
-icone_img = pygame.image.load('logo.png')  # Imagem do icone do jogo
+janela_p = pygame.display.set_mode((500, 530), 0, 32)           # Janela
+pygame.display.set_caption("Gênius")                            # Titulo da janela
+icone_img = pygame.image.load('logo.png')                       # Imagem do icone do jogo
 pygame.display.set_icon(icone_img)
-barra_status = pygame.Surface((janela_p.get_width(), 30))  # Barra de status
-barra_status.fill((60, 30, 190))  # Cor da barra de status
+barra_status = pygame.Surface((janela_p.get_width(), 30))       # Barra de status
+barra_status.fill((60, 30, 190))                                # Cor da barra de status
 
-background = pygame.image.load('Fundo.png')  # Imagem de fundo
+background = pygame.image.load('Fundo.png')                     # Imagem de fundo
 
 # Cores
 VERMELHO = (255, 0, 0)
@@ -34,15 +34,15 @@ cor_vermelha = pygame.draw.polygon(janela_p, VERMELHO, ((80, 345), (230, 346), (
 cor_azul = pygame.draw.polygon(janela_p, AZUL, ((411, 345), (265, 347), (263, 495)))
 
 # Textos
-comecar_text = fonte_opcao.render('Começar', True, (0, 0, 0))  # Texto do botao começar
+comecar_text = fonte_opcao.render('Começar', True, (0, 0, 0))   # Texto do botao começar
 texto = ' '
 
-pontos = 0  # Pontuação
-cores_sequencia = []  # Sequencia de cores que vao piscar
+pontos = 0                                                      # Pontuação
+cores_sequencia = []                                            # Sequencia de cores que vao piscar
 jogando = False
 
-ranking_jogo = {'pontos': '', 'nome': ''}  # Armazena quem esta no ranking
-nome_jogador = ''  # Nome do jogador
+ranking_jogo = {'pontos': '', 'nome': ''}                       # Armazena quem esta no ranking
+nome_jogador = ''                                               # Nome do jogador
 
 
 # Ranking
@@ -192,6 +192,7 @@ def JanelaRank(pontos):
             janela.destroy()
 
     janela = Tk()
+    janela.title("Ranking")
 
     janela1 = Frame()
     janela2 = Frame()
@@ -241,7 +242,7 @@ while not jogando:
     janela_p.blit(background, (0, 30))
     janela_p.blit(barra_status, (0, 0))
     comecar_btn = pygame.draw.rect(janela_p, (70, 200, 230), (175, 60, 150, 50))  # Desenha botao
-    janela_p.blit(comecar_text, (183, 60))  # Desenha texto no botao
+    janela_p.blit(comecar_text, (183, 60))                      # Desenha texto no botao
     pygame.display.update()
     clock.tick(27)
 
@@ -251,35 +252,35 @@ Ranking('ler')
 
 while jogando:
     mostrarStatus(pontos, 'Decore a sequência de cores', ranking_jogo)
-    time.sleep(1)  # Tempo para começar a proxima sequencia
+    time.sleep(1)                                               # Tempo para começar a proxima sequencia
 
     for evento in pygame.event.get():
         if evento.type == QUIT:
             quit()
 
-    cores_sequencia.append(escolherCorAleatoria())  # Escolhe uma cor e adiciona a lista de sequencia
-    piscarCores(cores_sequencia)  # Pisca as cores que estao na sequencia
+    cores_sequencia.append(escolherCorAleatoria())              # Escolhe uma cor e adiciona a lista de sequencia
+    piscarCores(cores_sequencia)                                # Pisca as cores que estao na sequencia
 
     mostrarStatus(pontos, 'Repita a sequência de cores', ranking_jogo)
-    resposta_jogador = recolheResposta(len(cores_sequencia))  # Aguarda a resposta do jogador
+    resposta_jogador = recolheResposta(len(cores_sequencia))    # Aguarda a resposta do jogador
 
-    if confereResposta(resposta_jogador, cores_sequencia):  # Confere a resposta do jogador
-        pontos += 100  # Soma pontuação
+    if confereResposta(resposta_jogador, cores_sequencia):      # Confere a resposta do jogador
+        pontos += 100                                           # Soma pontuação
         continue
     else:
         mostrarStatus(pontos, 'Errou a sequencia', ranking_jogo)
         tocaSom(sons['perdeu'])
 
-        if pontos > int(ranking_jogo['pontos']):  # Verifica se o jogador ultrapassou o ranking
+        if pontos > int(ranking_jogo['pontos']):                # Verifica se o jogador ultrapassou o ranking
             JanelaRank(str(pontos))
-            Ranking('escrever')  # Falta pegar o nome
+            Ranking('escrever')                                 # Falta pegar o nome
 
-        jogando = jogarNovamente()  # Pergunta se quer jogar novamente
+        jogando = jogarNovamente()                              # Pergunta se quer jogar novamente
 
         if jogando:
             Ranking('ler')
-            pontos = 0  # Zera pontuação
-            cores_sequencia = []  # Zera a sequencia
+            pontos = 0                                          # Zera pontuação
+            cores_sequencia = []                                # Zera a sequencia
             continue
         else:
             quit()
